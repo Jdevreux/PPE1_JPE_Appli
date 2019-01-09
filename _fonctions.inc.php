@@ -7,24 +7,16 @@ function connect()
    $hote="localhost";
    $login="root";
    $mdp="";
-   return mysql_connect($hote, $login, $mdp);
+   $nDB="JPE";
+   return mysqli_connect($hote, $login, $mdp,$nDB);
 }
 
-function selectBase($connexion)
-{
-   $bd="jpe";
-   $query="SET CHARACTER SET utf8";
-   // Modification du jeu de caractères de la connexion
-   $res=mysql_query($query, $connexion);
-   $ok=mysql_select_db($bd, $connexion);
-   return $ok;
-}
 // FONCTION VERIFIANT LE NOMBRE DE PLACES DISPONIBLES
 function nbPlacesDispo($connexion, $idVisite)
 {
 	$req = "select * from visite where visite.id=$idVisite";
-	$rsVisite = mysql_query($req, $connexion);
-	$lgVisite = mysql_fetch_array($rsVisite);
+	$rsVisite = mysqli_query($connexion, $req);
+	$lgVisite = mysqli_fetch_array($rsVisite);
 	$dispo = $lgVisite['nbPlacesMax'] - $lgVisite['nbVisiteursInscrits'];
 	return $dispo;
 }
@@ -56,18 +48,18 @@ function estUnCp($codePostal)
 // la fonction retourne vrai
 function estEntier($valeur)
 {
-   return !ereg("[^0-9]", $valeur);
+    return !preg_match("[^0-9]", $valeur);
 }
 
 // Si la valeur transmise ne contient pas d'autres caractères que des chiffres
 // et des lettres non accentuées, la fonction retourne vrai
 function estChiffresOuEtLettres($valeur)
 {
-   return !ereg("[^a-zA-Z0-9]", $valeur);
+   return !preg_match("[^a-zA-Z0-9]", $valeur);
 }
 
 // Fonction qui vérifie la saisie lors de la création d'un visiteur.
-// Pour chaque champ non valide, un message est ajouté à la liste des erreurs
+// Pour chaque champ non valide, un message est ajouté à la liste des erreurs
 function verifierDonneesVisiteur($connexion, $idVisite,$nom, $prenom, $tel, $cp, $nbInscrits)
 {
    if ($nom=="" || $prenom="" || $tel=="" || $nbInscrits=="" || $cp=="")
